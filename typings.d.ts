@@ -25,98 +25,11 @@ interface Element {
 	id?: id;
 	extension?: Extension[];
 }
-interface Identifier extends Element {
-	use?: code;
-	type?: CodeableConcept;
-	system?: uri;
-	value?: string;
-	period?: Period;
-	assigner?: Reference;
-}
-interface Narrative extends Element {
-	status: code;
-	div: xhtml;
-}
-interface CodeableConcept extends Element {
-	coding?: Coding[];
-	text?: string;
-}
-interface Period extends Element {
-	start?: dateTime;
-	end?: dateTime;
-}
-interface UsageContext extends Element {
-	code: Coding;
-	valueCodeableConcept?: CodeableConcept;
-	valueQuantity?: Quantity;
-	valueRange?: Range;
-}
-interface Reference extends Element {
-	reference?: string;
-	identifier?: Identifier;
-	display?: string;
-}
-interface Coding extends Element {
-	system?: uri;
-	version?: string;
-	code?: code;
-	display?: string;
-	userSelected?: boolean;
-}
-interface Quantity extends Element {
-	value?: decimal;
-	comparator?: code;
-	unit?: string;
-	system?: uri;
-	code?: code;
-}
-interface Meta extends Element {
-	versionId?: id;
-	lastUpdated?: instant;
-	profile?: uri[];
-	security?: Coding[];
-	tag?: Coding[];
-}
-interface Extension extends Element {
-	url: uri;
-	valueBase64Binary?: base64Binary;
-	valueBoolean?: boolean;
-	valueCode?: code;
-	valueDate?: date;
-	valueDateTime?: dateTime;
-	valueDecimal?: decimal;
-	valueId?: id;
-	valueInstant?: instant;
-	valueInteger?: integer;
-	valueMarkdown?: markdown;
-	valueOid?: oid;
-	valuePositiveInt?: positiveInt;
-	valueString?: string;
-	valueTime?: time;
-	valueUnsignedInt?: unsignedInt;
-	valueUri?: uri;
-	valueAddress?: Address;
-	valueAge?: Age;
-	valueAnnotation?: Annotation;
-	valueAttachment?: Attachment;
-	valueCodeableConcept?: CodeableConcept;
-	valueCoding?: Coding;
-	valueContactPoint?: ContactPoint;
-	valueCount?: Count;
-	valueDistance?: Distance;
-	valueDuration?: Duration;
-	valueHumanName?: HumanName;
-	valueIdentifier?: Identifier;
-	valueMoney?: Money;
-	valuePeriod?: Period;
-	valueQuantity?: Quantity;
-	valueRange?: Range;
-	valueRatio?: Ratio;
-	valueReference?: Reference;
-	valueSampledData?: SampledData;
-	valueSignature?: Signature;
-	valueTiming?: Timing;
-	valueMeta?: Meta;
+interface DomainResource extends ResourceBase {
+	text?: Narrative;
+	contained?: Resource[];
+	extension?: Extension[];
+	modifierExtension?: Extension[];
 }
 interface Account extends DomainResource {
 	identifier?: Identifier[];
@@ -191,6 +104,33 @@ interface ActivityDefinitionDynamicValue extends Element {
 	language?: string;
 	expression?: string;
 }
+interface AdverseEvent extends DomainResource {
+	identifier?: Identifier;
+	category?: code;
+	type?: CodeableConcept;
+	subject?: Reference;
+	date?: dateTime;
+	reaction?: Reference[];
+	location?: Reference;
+	seriousness?: CodeableConcept;
+	outcome?: CodeableConcept;
+	recorder?: Reference;
+	eventParticipant?: Reference;
+	description?: string;
+	suspectEntity?: AdverseEventSuspectEntity[];
+	subjectMedicalHistory?: Reference[];
+	referenceDocument?: Reference[];
+	study?: Reference[];
+}
+interface AdverseEventSuspectEntity extends Element {
+	instance: Reference;
+	causality?: code;
+	causalityAssessment?: CodeableConcept;
+	causalityProductRelatedness?: string;
+	causalityMethod?: CodeableConcept;
+	causalityAuthor?: Reference;
+	causalityResult?: CodeableConcept;
+}
 interface AllergyIntolerance extends DomainResource {
 	identifier?: Identifier[];
 	clinicalStatus?: code;
@@ -220,33 +160,6 @@ interface AllergyIntoleranceReaction extends Element {
 	severity?: code;
 	exposureRoute?: CodeableConcept;
 	note?: Annotation[];
-}
-interface AdverseEvent extends DomainResource {
-	identifier?: Identifier;
-	category?: code;
-	type?: CodeableConcept;
-	subject?: Reference;
-	date?: dateTime;
-	reaction?: Reference[];
-	location?: Reference;
-	seriousness?: CodeableConcept;
-	outcome?: CodeableConcept;
-	recorder?: Reference;
-	eventParticipant?: Reference;
-	description?: string;
-	suspectEntity?: AdverseEventSuspectEntity[];
-	subjectMedicalHistory?: Reference[];
-	referenceDocument?: Reference[];
-	study?: Reference[];
-}
-interface AdverseEventSuspectEntity extends Element {
-	instance: Reference;
-	causality?: code;
-	causalityAssessment?: CodeableConcept;
-	causalityProductRelatedness?: string;
-	causalityMethod?: CodeableConcept;
-	causalityAuthor?: Reference;
-	causalityResult?: CodeableConcept;
 }
 interface Appointment extends DomainResource {
 	identifier?: Identifier[];
@@ -4281,6 +4194,57 @@ interface TaskOutput extends Element {
 	valueTiming?: Timing;
 	valueMeta?: Meta;
 }
+interface TestReport extends DomainResource {
+	identifier?: Identifier;
+	name?: string;
+	status: code;
+	testScript: Reference;
+	result: code;
+	score?: decimal;
+	tester?: string;
+	issued?: dateTime;
+	participant?: TestReportParticipant[];
+	setup?: TestReportSetup;
+	test?: TestReportTest[];
+	teardown?: TestReportTeardown;
+}
+interface TestReportParticipant extends Element {
+	type: code;
+	uri: uri;
+	display?: string;
+}
+interface TestReportSetup extends Element {
+	action: TestReportSetupAction[];
+}
+interface TestReportSetupAction extends Element {
+	operation?: TestReportSetupActionOperation;
+	assert?: TestReportSetupActionAssert;
+}
+interface TestReportSetupActionOperation extends Element {
+	result: code;
+	message?: markdown;
+	detail?: uri;
+}
+interface TestReportSetupActionAssert extends Element {
+	result: code;
+	message?: markdown;
+	detail?: string;
+}
+interface TestReportTest extends Element {
+	name?: string;
+	description?: string;
+	action: TestReportTestAction[];
+}
+interface TestReportTestAction extends Element {
+	operation?: TestReportSetupActionOperation;
+	assert?: TestReportSetupActionAssert;
+}
+interface TestReportTeardown extends Element {
+	action: TestReportTeardownAction[];
+}
+interface TestReportTeardownAction extends Element {
+	operation: TestReportSetupActionOperation;
+}
 interface TestScript extends DomainResource {
 	url: uri;
 	identifier?: Identifier;
@@ -4459,57 +4423,6 @@ interface TestScriptTeardown extends Element {
 interface TestScriptTeardownAction extends Element {
 	operation: TestScriptSetupActionOperation;
 }
-interface TestReport extends DomainResource {
-	identifier?: Identifier;
-	name?: string;
-	status: code;
-	testScript: Reference;
-	result: code;
-	score?: decimal;
-	tester?: string;
-	issued?: dateTime;
-	participant?: TestReportParticipant[];
-	setup?: TestReportSetup;
-	test?: TestReportTest[];
-	teardown?: TestReportTeardown;
-}
-interface TestReportParticipant extends Element {
-	type: code;
-	uri: uri;
-	display?: string;
-}
-interface TestReportSetup extends Element {
-	action: TestReportSetupAction[];
-}
-interface TestReportSetupAction extends Element {
-	operation?: TestReportSetupActionOperation;
-	assert?: TestReportSetupActionAssert;
-}
-interface TestReportSetupActionOperation extends Element {
-	result: code;
-	message?: markdown;
-	detail?: uri;
-}
-interface TestReportSetupActionAssert extends Element {
-	result: code;
-	message?: markdown;
-	detail?: string;
-}
-interface TestReportTest extends Element {
-	name?: string;
-	description?: string;
-	action: TestReportTestAction[];
-}
-interface TestReportTestAction extends Element {
-	operation?: TestReportSetupActionOperation;
-	assert?: TestReportSetupActionAssert;
-}
-interface TestReportTeardown extends Element {
-	action: TestReportTeardownAction[];
-}
-interface TestReportTeardownAction extends Element {
-	operation: TestReportSetupActionOperation;
-}
 interface ValueSet extends DomainResource {
 	url?: uri;
 	identifier?: Identifier[];
@@ -4614,6 +4527,99 @@ interface VisionPrescriptionDispense extends Element {
 	brand?: string;
 	note?: Annotation[];
 }
+interface Identifier extends Element {
+	use?: code;
+	type?: CodeableConcept;
+	system?: uri;
+	value?: string;
+	period?: Period;
+	assigner?: Reference;
+}
+interface Narrative extends Element {
+	status: code;
+	div: xhtml;
+}
+interface CodeableConcept extends Element {
+	coding?: Coding[];
+	text?: string;
+}
+interface Period extends Element {
+	start?: dateTime;
+	end?: dateTime;
+}
+interface UsageContext extends Element {
+	code: Coding;
+	valueCodeableConcept?: CodeableConcept;
+	valueQuantity?: Quantity;
+	valueRange?: Range;
+}
+interface Reference extends Element {
+	reference?: string;
+	identifier?: Identifier;
+	display?: string;
+}
+interface Coding extends Element {
+	system?: uri;
+	version?: string;
+	code?: code;
+	display?: string;
+	userSelected?: boolean;
+}
+interface Quantity extends Element {
+	value?: decimal;
+	comparator?: code;
+	unit?: string;
+	system?: uri;
+	code?: code;
+}
+interface Meta extends Element {
+	versionId?: id;
+	lastUpdated?: instant;
+	profile?: uri[];
+	security?: Coding[];
+	tag?: Coding[];
+}
+interface Extension extends Element {
+	url: uri;
+	valueBase64Binary?: base64Binary;
+	valueBoolean?: boolean;
+	valueCode?: code;
+	valueDate?: date;
+	valueDateTime?: dateTime;
+	valueDecimal?: decimal;
+	valueId?: id;
+	valueInstant?: instant;
+	valueInteger?: integer;
+	valueMarkdown?: markdown;
+	valueOid?: oid;
+	valuePositiveInt?: positiveInt;
+	valueString?: string;
+	valueTime?: time;
+	valueUnsignedInt?: unsignedInt;
+	valueUri?: uri;
+	valueAddress?: Address;
+	valueAge?: Age;
+	valueAnnotation?: Annotation;
+	valueAttachment?: Attachment;
+	valueCodeableConcept?: CodeableConcept;
+	valueCoding?: Coding;
+	valueContactPoint?: ContactPoint;
+	valueCount?: Count;
+	valueDistance?: Distance;
+	valueDuration?: Duration;
+	valueHumanName?: HumanName;
+	valueIdentifier?: Identifier;
+	valueMoney?: Money;
+	valuePeriod?: Period;
+	valueQuantity?: Quantity;
+	valueRange?: Range;
+	valueRatio?: Ratio;
+	valueReference?: Reference;
+	valueSampledData?: SampledData;
+	valueSignature?: Signature;
+	valueTiming?: Timing;
+	valueMeta?: Meta;
+}
 interface Address extends Element {
 	use?: code;
 	type?: code;
@@ -4652,8 +4658,6 @@ interface Attachment extends Element {
 }
 interface Duration extends Quantity {
 }
-interface Count extends Quantity {
-}
 interface DataRequirement extends Element {
 	type: code;
 	profile?: uri[];
@@ -4675,9 +4679,7 @@ interface DataRequirementDateFilter extends Element {
 	valuePeriod?: Period;
 	valueDuration?: Duration;
 }
-interface Range extends Element {
-	low?: Quantity;
-	high?: Quantity;
+interface Count extends Quantity {
 }
 interface RelatedArtifact extends Element {
 	type: code;
@@ -4686,6 +4688,10 @@ interface RelatedArtifact extends Element {
 	url?: uri;
 	document?: Attachment;
 	resource?: Reference;
+}
+interface Range extends Element {
+	low?: Quantity;
+	high?: Quantity;
 }
 interface Dosage extends Element {
 	sequence?: integer;
@@ -4717,6 +4723,8 @@ interface ContactDetail extends Element {
 	name?: string;
 	telecom?: ContactPoint[];
 }
+interface Money extends Quantity {
+}
 interface ContactPoint extends Element {
 	system?: code;
 	value?: string;
@@ -4732,8 +4740,6 @@ interface HumanName extends Element {
 	prefix?: string[];
 	suffix?: string[];
 	period?: Period;
-}
-interface Money extends Quantity {
 }
 interface Signature extends Element {
 	type: Coding[];
@@ -5040,4 +5046,4 @@ interface ParameterDefinition extends Element {
 	type: code;
 	profile?: Reference;
 }
-type Resource = (Account|ActivityDefinition|AllergyIntolerance|AdverseEvent|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BodySite|Bundle|CapabilityStatement|CarePlan|CareTeam|ChargeItem|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|DataElement|DetectedIssue|Device|DeviceComponent|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationRecommendation|ImplementationGuide|Library|Linkage|List|Location|Measure|MeasureReport|Media|Medication|MedicationAdministration|MedicationDispense|MedicationRequest|MedicationStatement|MessageDefinition|MessageHeader|NamingSystem|NutritionOrder|Observation|OperationDefinition|OperationOutcome|Organization|Parameters|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|Practitioner|PractitionerRole|Procedure|ProcedureRequest|ProcessRequest|ProcessResponse|Provenance|Questionnaire|QuestionnaireResponse|ReferralRequest|RelatedPerson|RequestGroup|ResearchStudy|ResearchSubject|RiskAssessment|Schedule|SearchParameter|Sequence|ServiceDefinition|Slot|Specimen|StructureDefinition|StructureMap|Subscription|Substance|SupplyDelivery|SupplyRequest|Task|TestScript|TestReport|ValueSet|VisionPrescription|Duration|Count|Money|Age|Distance);}
+type Resource = (DomainResource|Account|ActivityDefinition|AdverseEvent|AllergyIntolerance|Appointment|AppointmentResponse|AuditEvent|Basic|Binary|BodySite|Bundle|CapabilityStatement|CarePlan|CareTeam|ChargeItem|Claim|ClaimResponse|ClinicalImpression|CodeSystem|Communication|CommunicationRequest|CompartmentDefinition|Composition|ConceptMap|Condition|Consent|Contract|Coverage|DataElement|DetectedIssue|Device|DeviceComponent|DeviceMetric|DeviceRequest|DeviceUseStatement|DiagnosticReport|DocumentManifest|DocumentReference|EligibilityRequest|EligibilityResponse|Encounter|Endpoint|EnrollmentRequest|EnrollmentResponse|EpisodeOfCare|ExpansionProfile|ExplanationOfBenefit|FamilyMemberHistory|Flag|Goal|GraphDefinition|Group|GuidanceResponse|HealthcareService|ImagingManifest|ImagingStudy|Immunization|ImmunizationRecommendation|ImplementationGuide|Library|Linkage|List|Location|Measure|MeasureReport|Media|Medication|MedicationAdministration|MedicationDispense|MedicationRequest|MedicationStatement|MessageDefinition|MessageHeader|NamingSystem|NutritionOrder|Observation|OperationDefinition|OperationOutcome|Organization|Parameters|Patient|PaymentNotice|PaymentReconciliation|Person|PlanDefinition|Practitioner|PractitionerRole|Procedure|ProcedureRequest|ProcessRequest|ProcessResponse|Provenance|Questionnaire|QuestionnaireResponse|ReferralRequest|RelatedPerson|RequestGroup|ResearchStudy|ResearchSubject|RiskAssessment|Schedule|SearchParameter|Sequence|ServiceDefinition|Slot|Specimen|StructureDefinition|StructureMap|Subscription|Substance|SupplyDelivery|SupplyRequest|Task|TestReport|TestScript|ValueSet|VisionPrescription|Duration|Count|Money|Age|Distance);}
